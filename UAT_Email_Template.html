@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UAT Status Update - {{TEST_LEVEL}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .header {
+            border-bottom: 4px solid {{HEADER_COLOR}};
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .header h1 {
+            margin: 0;
+            color: {{HEADER_COLOR}};
+            font-size: 24px;
+        }
+        .header p {
+            margin: 5px 0 0 0;
+            color: #666;
+            font-size: 14px;
+        }
+        .test-level-badge {
+            display: inline-block;
+            background-color: {{HEADER_COLOR}};
+            color: white;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+        .metrics-section {
+            margin: 25px 0;
+        }
+        .metrics-section h2 {
+            color: {{HEADER_COLOR}};
+            font-size: 16px;
+            border-bottom: 2px solid {{HEADER_COLOR}};
+            padding-bottom: 10px;
+            margin-bottom: 15px;
+        }
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        .metric-box {
+            background-color: #f5f5f5;
+            padding: 15px;
+            border-left: 4px solid {{HEADER_COLOR}};
+            border-radius: 4px;
+            text-align: center;
+        }
+        .metric-label {
+            font-size: 12px;
+            color: #666;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+        .metric-value {
+            font-size: 28px;
+            font-weight: bold;
+            color: {{HEADER_COLOR}};
+        }
+        .metric-unit {
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+        .status-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 15px 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .status-table thead {
+            background-color: {{HEADER_COLOR}};
+            color: white;
+        }
+        .status-table th {
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            font-size: 13px;
+        }
+        .status-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e0e0e0;
+            font-size: 13px;
+        }
+        .status-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .pass-badge {
+            background-color: #4CAF50;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .fail-badge {
+            background-color: #f44336;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .partial-badge {
+            background-color: #FF9800;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-weight: bold;
+            font-size: 11px;
+        }
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background-color: {{HEADER_COLOR}};
+            text-align: center;
+            line-height: 20px;
+            color: white;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        .issues-log {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .issues-log h3 {
+            margin-top: 0;
+            color: #856404;
+        }
+        .issue-item {
+            margin: 8px 0;
+            padding-left: 20px;
+        }
+        .issue-item:before {
+            content: "⚠ ";
+            margin-left: -20px;
+            margin-right: 10px;
+            color: #ffc107;
+            font-weight: bold;
+        }
+        .phase-section {
+            margin: 20px 0;
+            padding: 15px;
+            background-color: #f0f7ff;
+            border-left: 4px solid {{HEADER_COLOR}};
+            border-radius: 4px;
+        }
+        .phase-section h3 {
+            margin-top: 0;
+            color: {{HEADER_COLOR}};
+            font-size: 14px;
+        }
+        .next-steps {
+            background-color: #e8f5e9;
+            border-left: 4px solid #4CAF50;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+        .next-steps h3 {
+            margin-top: 0;
+            color: #2e7d32;
+        }
+        .next-steps ul {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+        .next-steps li {
+            margin: 8px 0;
+        }
+        .footer {
+            border-top: 1px solid #e0e0e0;
+            margin-top: 30px;
+            padding-top: 20px;
+            text-align: center;
+            color: #999;
+            font-size: 12px;
+        }
+        .alert-critical {
+            background-color: #f8d7da;
+            border-left: 4px solid #f44336;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            color: #721c24;
+        }
+        .alert-warning {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            color: #856404;
+        }
+        .alert-info {
+            background-color: #d1ecf1;
+            border-left: 4px solid #17a2b8;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+            color: #0c5460;
+        }
+        @media (max-width: 768px) {
+            .metrics-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .container {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="test-level-badge">{{TEST_LEVEL}} - {{CYCLE_NAME}}</div>
+            <h1>{{PROJECT_NAME}} - Testing Status Update</h1>
+            <p><strong>Report Date:</strong> {{REPORT_DATE}} | <strong>Test Terminal:</strong> {{TERMINAL_ID}}</p>
+            <p><strong>Tester:</strong> {{TESTER_NAME}} | <strong>Status:</strong> <span style="color: {{STATUS_COLOR}}; font-weight: bold;">{{OVERALL_STATUS}}</span></p>
+        </div>
+
+        <!-- TEST LEVEL SPECIFIC ALERTS -->
+        {{#IF_SITS}}
+        <div class="alert-info">
+            <strong>SITS Phase:</strong> System Integration Testing in progress. Focus on integration points and end-to-end workflows.
+        </div>
+        {{/IF_SITS}}
+
+        {{#IF_UAT}}
+        <div class="alert-warning">
+            <strong>UAT Phase:</strong> User Acceptance Testing underway. Business scenarios and user workflows validation required.
+        </div>
+        {{/IF_UAT}}
+
+        {{#IF_GOLIVE}}
+        <div class="alert-critical">
+            <strong>GO-LIVE Phase:</strong> Production readiness testing. All critical items must be resolved before deployment.
+        </div>
+        {{/IF_GOLIVE}}
+
+        <!-- KEY METRICS -->
+        <div class="metrics-section">
+            <h2>📊 Test Execution Metrics</h2>
+            <div class="metrics-grid">
+                <div class="metric-box">
+                    <div class="metric-label">Completion %</div>
+                    <div class="metric-value">{{COMPLETION_PERCENTAGE}}</div>
+                    <div class="metric-unit">of tests executed</div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" style="width: {{COMPLETION_PERCENTAGE}}%;">{{COMPLETION_PERCENTAGE}}%</div>
+                    </div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-label">Pass Rate</div>
+                    <div class="metric-value">{{PASS_COUNT}}</div>
+                    <div class="metric-unit">{{PASS_PERCENTAGE}}% passed</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-label">Failed Tests</div>
+                    <div class="metric-value">{{FAIL_COUNT}}</div>
+                    <div class="metric-unit">{{FAIL_PERCENTAGE}}% failed</div>
+                </div>
+                <div class="metric-box">
+                    <div class="metric-label">Total Test Cases</div>
+                    <div class="metric-value">{{TOTAL_TEST_CASES}}</div>
+                    <div class="metric-unit">in this phase</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PHASE-WISE BREAKDOWN -->
+        <div class="metrics-section">
+            <h2>📋 Test Classification Summary</h2>
+            <table class="status-table">
+                <thead>
+                    <tr>
+                        <th>Phase / Classification</th>
+                        <th>Status</th>
+                        <th>% Completion</th>
+                        <th>Pass</th>
+                        <th>Fail</th>
+                        <th>Total Test Cases</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#PHASE_ROWS}}
+                    <tr>
+                        <td><strong>{{PHASE_NAME}}</strong><br/><small style="color: #999;">{{CLASSIFICATION}}</small></td>
+                        <td>
+                            {{#IF_STATUS_COMPLETED}}<span class="pass-badge">✓ COMPLETED</span>{{/IF_STATUS_COMPLETED}}
+                            {{#IF_STATUS_IN_PROGRESS}}<span class="partial-badge">⧖ IN-PROGRESS</span>{{/IF_STATUS_IN_PROGRESS}}
+                            {{#IF_STATUS_BLOCKED}}<span class="fail-badge">✗ BLOCKED</span>{{/IF_STATUS_BLOCKED}}
+                        </td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {{COMPLETION}}%; background-color: {{STATUS_COLOR}};">{{COMPLETION}}%</div>
+                            </div>
+                        </td>
+                        <td><span class="pass-badge">{{PASS}}</span></td>
+                        <td><span class="fail-badge">{{FAIL}}</span></td>
+                        <td><strong>{{TOTAL}}</strong></td>
+                    </tr>
+                    {{/PHASE_ROWS}}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- TEST CASE EXECUTION DETAILS -->
+        <div class="metrics-section">
+            <h2>🧪 Test Case Execution Details</h2>
+            <table class="status-table">
+                <thead>
+                    <tr>
+                        <th>Function / Product</th>
+                        <th>Card No.</th>
+                        <th>Account No.</th>
+                        <th>Pre-Conditions</th>
+                        <th>Expected</th>
+                        <th>Actual</th>
+                        <th>Status</th>
+                        <th>FT's</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{#TEST_CASE_ROWS}}
+                    <tr>
+                        <td>{{FUNCTION_NAME}}<br/><small style="color: #999;">{{PRODUCT}}</small></td>
+                        <td><small>{{CARD_NO}}</small></td>
+                        <td><small>{{ACCOUNT_NO}}</small></td>
+                        <td><small>{{PRE_CONDITIONS}}</small></td>
+                        <td><small>{{EXPECTED}}</small></td>
+                        <td><small>{{ACTUAL}}</small></td>
+                        <td>
+                            {{#IF_PASS}}<span class="pass-badge">✓ PASS</span>{{/IF_PASS}}
+                            {{#IF_FAIL}}<span class="fail-badge">✗ FAIL</span>{{/IF_FAIL}}
+                        </td>
+                        <td><small>{{FTS}}</small></td>
+                    </tr>
+                    {{/TEST_CASE_ROWS}}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- ISSUES LOG -->
+        {{#IF_ISSUES_EXIST}}
+        <div class="issues-log">
+            <h3>⚠️ Issues Log ({{ISSUES_COUNT}} items)</h3>
+            {{#ISSUE_ITEMS}}
+            <div class="issue-item">
+                <strong>{{ISSUE_ID}}</strong> - {{ISSUE_TITLE}}<br/>
+                <small>Severity: <span style="font-weight: bold; color: {{SEVERITY_COLOR}};">{{SEVERITY}}</span> | Assigned: {{ASSIGNED_TO}} | Status: {{ISSUE_STATUS}}</small>
+            </div>
+            {{/ISSUE_ITEMS}}
+        </div>
+        {{/IF_ISSUES_EXIST}}
+
+        <!-- PHASE-SPECIFIC RECOMMENDATIONS -->
+        {{#IF_SITS}}
+        <div class="phase-section">
+            <h3>SITS Phase - Focus Areas</h3>
+            <ul>
+                <li>Verify integration between all modules</li>
+                <li>Validate data flow across systems</li>
+                <li>Confirm API/interface contracts</li>
+                <li>Test error handling and rollback scenarios</li>
+            </ul>
+        </div>
+        {{/IF_SITS}}
+
+        {{#IF_UAT}}
+        <div class="phase-section">
+            <h3>UAT Phase - Business Validation</h3>
+            <ul>
+                <li>Validate against business requirements</li>
+                <li>Confirm user workflows and processes</li>
+                <li>Test edge cases and user scenarios</li>
+                <li>Obtain user sign-off on functionality</li>
+            </ul>
+        </div>
+        {{/IF_UAT}}
+
+        {{#IF_GOLIVE}}
+        <div class="phase-section">
+            <h3>GO-LIVE Phase - Production Readiness</h3>
+            <ul>
+                <li>All critical defects MUST be resolved</li>
+                <li>Performance testing completed and validated</li>
+                <li>Rollback procedures tested and documented</li>
+                <li>Production environment sign-off obtained</li>
+            </ul>
+        </div>
+        {{/IF_GOLIVE}}
+
+        <!-- NEXT STEPS -->
+        <div class="next-steps">
+            <h3>✓ Next Steps & Action Items</h3>
+            <ul>
+                <li><strong>By {{NEXT_MILESTONE_DATE}}:</strong> {{NEXT_MILESTONE_ACTION}}</li>
+                <li><strong>Blockers:</strong> {{BLOCKERS_SUMMARY}}</li>
+                <li><strong>Dependencies:</strong> {{DEPENDENCIES_SUMMARY}}</li>
+                <li><strong>Risk Assessment:</strong> {{RISK_LEVEL}} - {{RISK_DESCRIPTION}}</li>
+            </ul>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="footer">
+            <p>This is an automated report generated on {{REPORT_DATE}} at {{REPORT_TIME}}</p>
+            <p>For questions or clarifications, please contact: {{QA_LEAD_EMAIL}}</p>
+            <p style="margin-top: 20px; border-top: 1px solid #e0e0e0; padding-top: 10px;">
+                <em>Confidential - For Internal Use Only</em>
+            </p>
+        </div>
+    </div>
+</body>
+</html>
